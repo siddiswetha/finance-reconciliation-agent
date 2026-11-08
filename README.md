@@ -105,8 +105,6 @@ finance-reconciliation-agent/
 
 Author: Venkata Swetha Siddi. Actual resume: 4+ years in ML and analytics, enterprise networking, and cloud automation, now focused on AI/ML engineering and applied AI. Certified by Anthropic in Claude and the AI Fluency Framework (Claude 101 and AI Fluency Framework & Foundations, June 2026). Skills on that resume include ML evaluation, prompt engineering, Python, SQL, Azure, AWS, Terraform, Ansible, Docker, and Kubernetes. Experience on that resume: Network Engineer, Relic Solutions, Elmont, NY, Oct 2025–Feb 2026; Network Infrastructure Engineer, NWN Carousel, Jan–Jun 2025; System Engineer Intern, InStyle, Houston, Jun–Dec 2024; Data Scientist, Cognizant, Dec 2019–Apr 2022; Associate Engineer, Accenture, Jun 2018–Mar 2019.
 
-How this project complements, and does not repeat, her existing projects: her existing work under github.com/networkwithswetha-alt includes an LLM Fine-Tuning with Eval Harness project and a Document Extraction Pipeline (LLM extraction into Pydantic-validated records, with one validation retry and a deterministic regex fallback). This reconciliation agent is a different step: it does not fine-tune a model and it does not extract documents. It takes already-structured ledger and bank rows, reconciles them, retrieves close rules, explains each exception with source citations, and stops for a human check before saving an audit file. It builds on the same strengths — ML evaluation, prompt engineering, and schema-validated, auditable outputs — applied to a Finance close workflow instead.
-
 ## Role skill mapping
 
 | Finance AI Engineer need | How this project shows it |
