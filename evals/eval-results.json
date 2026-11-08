@@ -1,0 +1,20 @@
+{
+  "pass_bar": "12/12 tests pass",
+  "passed": 12,
+  "total": 12,
+  "met_pass_bar": true,
+  "results": {
+    "E01": "pass",
+    "E02": "pass",
+    "E03": "pass",
+    "E04": "pass",
+    "E05": "pass",
+    "E06": "pass",
+    "E07": "pass",
+    "E08": "pass",
+    "E09": "pass",
+    "E10": "pass",
+    "E11": "pass",
+    "E12": "pass"
+  }
+}
