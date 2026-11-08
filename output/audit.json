@@ -1,6 +1,6 @@
 {
   "project": "finance-reconciliation-agent",
-  "data_note": "SYNTHETIC data only \u2014 all ledger and bank rows are invented examples. No real finance data, no SoFi data.",
+  "data_note": "SYNTHETIC data only \u2014 all ledger and bank rows are invented examples. No real finance data, no real company data.",
   "llm_note": "Explanations were drafted by the local deterministic MockLLMClient. No real LLM API was called.",
   "summary": {
     "ledger_rows": 14,
