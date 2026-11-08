@@ -1,0 +1,615 @@
+{
+  "project": "finance-reconciliation-agent",
+  "data_note": "SYNTHETIC data only \u2014 all ledger and bank rows are invented examples. No real finance data, no SoFi data.",
+  "llm_note": "Explanations were drafted by the local deterministic MockLLMClient. No real LLM API was called.",
+  "summary": {
+    "ledger_rows": 14,
+    "bank_rows": 14,
+    "matched": 8,
+    "amount_mismatch": 2,
+    "date_difference": 2,
+    "missing_in_bank": 2,
+    "missing_in_ledger": 2,
+    "total_items": 16,
+    "open_exceptions": 8
+  },
+  "assumptions": [
+    "All data is SYNTHETIC and invented for this demo; no real finance data is used.",
+    "The 'reference' field is the primary match key (matching-rules.md Rule 1).",
+    "A date difference of 1-2 days with an exact amount is noted, not treated as an error (Rule 4).",
+    "An amount mismatch of any size is flagged, never rounded away (Rule 3).",
+    "No match is ever guessed from a similar amount or vendor name (Rule 6).",
+    "The mock LLM explains only what the rows and rules state; it never invents a reason for a difference."
+  ],
+  "human_decision": "confirmed (operator passed --auto-confirm after reviewing the summary above)",
+  "items": [
+    {
+      "ledger_id": "L001",
+      "bank_id": "B001",
+      "reference": "INV-1001",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L001",
+          "date": "2026-10-01",
+          "vendor": "Acme Supplies",
+          "description": "Office supplies order",
+          "amount": "1250.00",
+          "reference": "INV-1001",
+          "account": "6100-Office Supplies"
+        },
+        "bank_row": {
+          "bank_id": "B001",
+          "date": "2026-10-01",
+          "payee": "Acme Supplies",
+          "description": "Office supplies order",
+          "amount": "1250.00",
+          "reference": "INV-1001"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L001 and bank B001 match exactly. No action needed."
+    },
+    {
+      "ledger_id": "L002",
+      "bank_id": "B002",
+      "reference": "INV-1002",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L002",
+          "date": "2026-10-02",
+          "vendor": "Northwind Office",
+          "description": "Printer paper and ink",
+          "amount": "480.50",
+          "reference": "INV-1002",
+          "account": "6100-Office Supplies"
+        },
+        "bank_row": {
+          "bank_id": "B002",
+          "date": "2026-10-02",
+          "payee": "Northwind Office",
+          "description": "Printer paper and ink",
+          "amount": "480.50",
+          "reference": "INV-1002"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L002 and bank B002 match exactly. No action needed."
+    },
+    {
+      "ledger_id": "L003",
+      "bank_id": "B003",
+      "reference": "INV-1003",
+      "status": "amount_mismatch",
+      "amount_difference": 10.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L003",
+          "date": "2026-10-03",
+          "vendor": "BluePeak Cloud",
+          "description": "Monthly cloud hosting",
+          "amount": "899.00",
+          "reference": "INV-1003",
+          "account": "6200-Cloud Services"
+        },
+        "bank_row": {
+          "bank_id": "B003",
+          "date": "2026-10-03",
+          "payee": "BluePeak Cloud",
+          "description": "Monthly cloud hosting",
+          "amount": "889.00",
+          "reference": "INV-1003"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 3 \u2014 Amount mismatch\n\nIf the reference matches but the amounts differ by any amount, flag the\npair as `amount_mismatch`. Do not round the difference away. Record both\namounts and the difference in the audit file. An amount mismatch always\nneeds a human decision before it is treated as resolve"
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 4 \u2014 Date difference\n\nIf the reference and amount match but the dates differ, flag the pair as\n`date_difference`. A bank posting date can lag the ledger date by a few\ndays. Record both dates and the number of days between them. A date\ndifference of 1\u20132 days is noted, not treated as an error, "
+        }
+      ],
+      "explanation": "Ledger L003 (INV-1003) records $899.00 on 2026-10-03, but bank B003 records $889.00 on 2026-10-03 \u2014 a difference of $10.00. Rule applied: ## Rule 3 \u2014 Amount mismatch If the reference matches but the amounts differ by any amount, flag the pair as `amount_mismatch`. Do not round the difference away. Record both amounts and the difference in the audit file. ... Reason unknown \u2014 needs human review. This item is not resolved."
+    },
+    {
+      "ledger_id": "L004",
+      "bank_id": "B004",
+      "reference": "INV-1004",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L004",
+          "date": "2026-10-04",
+          "vendor": "Harbor Logistics",
+          "description": "Freight delivery",
+          "amount": "2100.00",
+          "reference": "INV-1004",
+          "account": "6300-Logistics"
+        },
+        "bank_row": {
+          "bank_id": "B004",
+          "date": "2026-10-04",
+          "payee": "Harbor Logistics",
+          "description": "Freight delivery",
+          "amount": "2100.00",
+          "reference": "INV-1004"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L004 and bank B004 match exactly. No action needed."
+    },
+    {
+      "ledger_id": "L005",
+      "bank_id": null,
+      "reference": "INV-1005",
+      "status": "missing_in_bank",
+      "amount_difference": null,
+      "date_difference_days": null,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L005",
+          "date": "2026-10-05",
+          "vendor": "Maple Catering",
+          "description": "Team lunch catering",
+          "amount": "320.75",
+          "reference": "INV-1005",
+          "account": "6400-Meals"
+        },
+        "bank_row": null
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 3 \u2014 Find bank-only rows\n\nList every bank row whose reference appears in no ledger row. These are\n`missing_in_ledger` exceptions. Bank fees and interest are common\nexamples, but do not assume that \u2014 list them and let a human decide."
+        }
+      ],
+      "explanation": "Ledger L005 (INV-1005) records $320.75 on 2026-10-05 for Maple Catering, but no bank row has that reference. Rule applied: ## Step 2 \u2014 Match every ledger row For each ledger row, look up its reference in the bank file and apply the matching rules in docs/matching-rules.md. Count exact matches, amount mismatches, date differences, and rows ... It may not have cleared yet, or the bank record may be missing. Reason unknown \u2014 needs human review. This item is not resolved."
+    },
+    {
+      "ledger_id": "L006",
+      "bank_id": "B006",
+      "reference": "INV-1006",
+      "status": "date_difference",
+      "amount_difference": 0.0,
+      "date_difference_days": 2,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L006",
+          "date": "2026-10-06",
+          "vendor": "Quartz Legal",
+          "description": "Contract review",
+          "amount": "1500.00",
+          "reference": "INV-1006",
+          "account": "6500-Legal"
+        },
+        "bank_row": {
+          "bank_id": "B006",
+          "date": "2026-10-08",
+          "payee": "Quartz Legal",
+          "description": "Contract review",
+          "amount": "1500.00",
+          "reference": "INV-1006"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 4 \u2014 Date difference\n\nIf the reference and amount match but the dates differ, flag the pair as\n`date_difference`. A bank posting date can lag the ledger date by a few\ndays. Record both dates and the number of days between them. A date\ndifference of 1\u20132 days is noted, not treated as an error, "
+        },
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 4 \u2014 Draft an explanation for every exception\n\nFor each mismatch or missing row, draft one short plain-English\nexplanation that states the two amounts or dates, the difference, and\nthe rule that applied. Every explanation must cite the ledger row id\nand bank row id it refers to."
+        }
+      ],
+      "explanation": "Ledger L006 (INV-1006) and bank B006 agree on the amount $1500.00, but the dates differ: ledger 2026-10-06, bank 2026-10-08 (2 day(s) apart). Rule applied: ## Rule 4 \u2014 Date difference If the reference and amount match but the dates differ, flag the pair as `date_difference`. A bank posting date can lag the ledger date by a few days. Record both dates and the number of days ... This is noted, not treated as an error, and still shown for review."
+    },
+    {
+      "ledger_id": "L007",
+      "bank_id": "B007",
+      "reference": "INV-1007",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L007",
+          "date": "2026-10-07",
+          "vendor": "Pine Utilities",
+          "description": "Electricity bill",
+          "amount": "210.40",
+          "reference": "INV-1007",
+          "account": "6600-Utilities"
+        },
+        "bank_row": {
+          "bank_id": "B007",
+          "date": "2026-10-07",
+          "payee": "Pine Utilities",
+          "description": "Electricity bill",
+          "amount": "210.40",
+          "reference": "INV-1007"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L007 and bank B007 match exactly. No action needed."
+    },
+    {
+      "ledger_id": "L008",
+      "bank_id": "B008",
+      "reference": "INV-1008",
+      "status": "amount_mismatch",
+      "amount_difference": 18.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L008",
+          "date": "2026-10-08",
+          "vendor": "Cedar Travel",
+          "description": "Flight booking",
+          "amount": "675.25",
+          "reference": "INV-1008",
+          "account": "6700-Travel"
+        },
+        "bank_row": {
+          "bank_id": "B008",
+          "date": "2026-10-08",
+          "payee": "Cedar Travel",
+          "description": "Flight booking",
+          "amount": "657.25",
+          "reference": "INV-1008"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 3 \u2014 Amount mismatch\n\nIf the reference matches but the amounts differ by any amount, flag the\npair as `amount_mismatch`. Do not round the difference away. Record both\namounts and the difference in the audit file. An amount mismatch always\nneeds a human decision before it is treated as resolve"
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 4 \u2014 Date difference\n\nIf the reference and amount match but the dates differ, flag the pair as\n`date_difference`. A bank posting date can lag the ledger date by a few\ndays. Record both dates and the number of days between them. A date\ndifference of 1\u20132 days is noted, not treated as an error, "
+        }
+      ],
+      "explanation": "Ledger L008 (INV-1008) records $675.25 on 2026-10-08, but bank B008 records $657.25 on 2026-10-08 \u2014 a difference of $18.00. Rule applied: ## Rule 3 \u2014 Amount mismatch If the reference matches but the amounts differ by any amount, flag the pair as `amount_mismatch`. Do not round the difference away. Record both amounts and the difference in the audit file. ... Reason unknown \u2014 needs human review. This item is not resolved."
+    },
+    {
+      "ledger_id": "L009",
+      "bank_id": "B009",
+      "reference": "INV-1009",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L009",
+          "date": "2026-10-09",
+          "vendor": "Willow Marketing",
+          "description": "Social media campaign",
+          "amount": "980.00",
+          "reference": "INV-1009",
+          "account": "6800-Marketing"
+        },
+        "bank_row": {
+          "bank_id": "B009",
+          "date": "2026-10-09",
+          "payee": "Willow Marketing",
+          "description": "Social media campaign",
+          "amount": "980.00",
+          "reference": "INV-1009"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L009 and bank B009 match exactly. No action needed."
+    },
+    {
+      "ledger_id": "L010",
+      "bank_id": null,
+      "reference": "INV-1010",
+      "status": "missing_in_bank",
+      "amount_difference": null,
+      "date_difference_days": null,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L010",
+          "date": "2026-10-10",
+          "vendor": "Aspen Insurance",
+          "description": "Quarterly insurance premium",
+          "amount": "1340.00",
+          "reference": "INV-1010",
+          "account": "6900-Insurance"
+        },
+        "bank_row": null
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 3 \u2014 Find bank-only rows\n\nList every bank row whose reference appears in no ledger row. These are\n`missing_in_ledger` exceptions. Bank fees and interest are common\nexamples, but do not assume that \u2014 list them and let a human decide."
+        }
+      ],
+      "explanation": "Ledger L010 (INV-1010) records $1340.00 on 2026-10-10 for Aspen Insurance, but no bank row has that reference. Rule applied: ## Step 2 \u2014 Match every ledger row For each ledger row, look up its reference in the bank file and apply the matching rules in docs/matching-rules.md. Count exact matches, amount mismatches, date differences, and rows ... It may not have cleared yet, or the bank record may be missing. Reason unknown \u2014 needs human review. This item is not resolved."
+    },
+    {
+      "ledger_id": "L011",
+      "bank_id": "B010",
+      "reference": "INV-1011",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L011",
+          "date": "2026-10-11",
+          "vendor": "Birch Software",
+          "description": "Design tool subscription",
+          "amount": "540.00",
+          "reference": "INV-1011",
+          "account": "6200-Cloud Services"
+        },
+        "bank_row": {
+          "bank_id": "B010",
+          "date": "2026-10-11",
+          "payee": "Birch Software",
+          "description": "Design tool subscription",
+          "amount": "540.00",
+          "reference": "INV-1011"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L011 and bank B010 match exactly. No action needed."
+    },
+    {
+      "ledger_id": "L012",
+      "bank_id": "B011",
+      "reference": "INV-1012",
+      "status": "date_difference",
+      "amount_difference": 0.0,
+      "date_difference_days": 1,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L012",
+          "date": "2026-10-12",
+          "vendor": "Elm Consulting",
+          "description": "Process review consulting",
+          "amount": "2750.00",
+          "reference": "INV-1012",
+          "account": "7000-Consulting"
+        },
+        "bank_row": {
+          "bank_id": "B011",
+          "date": "2026-10-13",
+          "payee": "Elm Consulting",
+          "description": "Process review consulting",
+          "amount": "2750.00",
+          "reference": "INV-1012"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 4 \u2014 Date difference\n\nIf the reference and amount match but the dates differ, flag the pair as\n`date_difference`. A bank posting date can lag the ledger date by a few\ndays. Record both dates and the number of days between them. A date\ndifference of 1\u20132 days is noted, not treated as an error, "
+        },
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 4 \u2014 Draft an explanation for every exception\n\nFor each mismatch or missing row, draft one short plain-English\nexplanation that states the two amounts or dates, the difference, and\nthe rule that applied. Every explanation must cite the ledger row id\nand bank row id it refers to."
+        }
+      ],
+      "explanation": "Ledger L012 (INV-1012) and bank B011 agree on the amount $2750.00, but the dates differ: ledger 2026-10-12, bank 2026-10-13 (1 day(s) apart). Rule applied: ## Rule 4 \u2014 Date difference If the reference and amount match but the dates differ, flag the pair as `date_difference`. A bank posting date can lag the ledger date by a few days. Record both dates and the number of days ... This is noted, not treated as an error, and still shown for review."
+    },
+    {
+      "ledger_id": "L013",
+      "bank_id": "B012",
+      "reference": "INV-1013",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L013",
+          "date": "2026-10-13",
+          "vendor": "Firestone Rent",
+          "description": "October office rent",
+          "amount": "4200.00",
+          "reference": "INV-1013",
+          "account": "7100-Rent"
+        },
+        "bank_row": {
+          "bank_id": "B012",
+          "date": "2026-10-13",
+          "payee": "Firestone Rent",
+          "description": "October office rent",
+          "amount": "4200.00",
+          "reference": "INV-1013"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L013 and bank B012 match exactly. No action needed."
+    },
+    {
+      "ledger_id": "L014",
+      "bank_id": "B013",
+      "reference": "INV-1014",
+      "status": "matched",
+      "amount_difference": 0.0,
+      "date_difference_days": 0,
+      "citations": {
+        "ledger_row": {
+          "ledger_id": "L014",
+          "date": "2026-10-14",
+          "vendor": "Grove Training",
+          "description": "Staff training course",
+          "amount": "415.60",
+          "reference": "INV-1014",
+          "account": "7200-Training"
+        },
+        "bank_row": {
+          "bank_id": "B013",
+          "date": "2026-10-14",
+          "payee": "Grove Training",
+          "description": "Staff training course",
+          "amount": "415.60",
+          "reference": "INV-1014"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 2 \u2014 Match every ledger row\n\nFor each ledger row, look up its reference in the bank file and apply the\nmatching rules in docs/matching-rules.md. Count exact matches, amount\nmismatches, date differences, and rows missing in the bank."
+        },
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 2 \u2014 Exact match\n\nA pair is an exact match when the reference, the amount, and the date are\nall identical. Exact matches need no human review beyond the normal\nhuman-in-the-loop confirmation of the whole run."
+        }
+      ],
+      "explanation": "Ledger L014 and bank B013 match exactly. No action needed."
+    },
+    {
+      "ledger_id": null,
+      "bank_id": "B005",
+      "reference": "BANK-FEE-77",
+      "status": "missing_in_ledger",
+      "amount_difference": null,
+      "date_difference_days": null,
+      "citations": {
+        "ledger_row": null,
+        "bank_row": {
+          "bank_id": "B005",
+          "date": "2026-10-06",
+          "payee": "Summit Bank",
+          "description": "Monthly account fee",
+          "amount": "45.00",
+          "reference": "BANK-FEE-77"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 5 \u2014 Missing on one side\n\n- A ledger row with no bank row for its reference is `missing_in_bank`.\n  It may be a payment that has not cleared yet, or a missing bank record.\n- A bank row with no ledger row for its reference is `missing_in_ledger`.\n  It may be a bank fee, interest, or a payment "
+        },
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 3 \u2014 Find bank-only rows\n\nList every bank row whose reference appears in no ledger row. These are\n`missing_in_ledger` exceptions. Bank fees and interest are common\nexamples, but do not assume that \u2014 list them and let a human decide."
+        }
+      ],
+      "explanation": "Bank B005 (BANK-FEE-77) records $45.00 on 2026-10-06 for Summit Bank, but no ledger row has that reference. Rule applied: ## Rule 5 \u2014 Missing on one side - A ledger row with no bank row for its reference is `missing_in_bank`. It may be a payment that has not cleared yet, or a missing bank record. - A bank row with no ledger row for its ... It may be a bank fee, interest, or a payment never entered in the ledger. Reason unknown \u2014 needs human review. This item is not resolved."
+    },
+    {
+      "ledger_id": null,
+      "bank_id": "B014",
+      "reference": "INT-2026-10",
+      "status": "missing_in_ledger",
+      "amount_difference": null,
+      "date_difference_days": null,
+      "citations": {
+        "ledger_row": null,
+        "bank_row": {
+          "bank_id": "B014",
+          "date": "2026-10-15",
+          "payee": "River Bank",
+          "description": "Interest received",
+          "amount": "120.00",
+          "reference": "INT-2026-10"
+        }
+      },
+      "retrieved_sources": [
+        {
+          "source": "matching-rules.md",
+          "snippet": "## Rule 5 \u2014 Missing on one side\n\n- A ledger row with no bank row for its reference is `missing_in_bank`.\n  It may be a payment that has not cleared yet, or a missing bank record.\n- A bank row with no ledger row for its reference is `missing_in_ledger`.\n  It may be a bank fee, interest, or a payment "
+        },
+        {
+          "source": "close-checklist.md",
+          "snippet": "## Step 3 \u2014 Find bank-only rows\n\nList every bank row whose reference appears in no ledger row. These are\n`missing_in_ledger` exceptions. Bank fees and interest are common\nexamples, but do not assume that \u2014 list them and let a human decide."
+        }
+      ],
+      "explanation": "Bank B014 (INT-2026-10) records $120.00 on 2026-10-15 for River Bank, but no ledger row has that reference. Rule applied: ## Rule 5 \u2014 Missing on one side - A ledger row with no bank row for its reference is `missing_in_bank`. It may be a payment that has not cleared yet, or a missing bank record. - A bank row with no ledger row for its ... It may be a bank fee, interest, or a payment never entered in the ledger. Reason unknown \u2014 needs human review. This item is not resolved."
+    }
+  ],
+  "open_exceptions": [
+    "INV-1003",
+    "INV-1005",
+    "INV-1006",
+    "INV-1008",
+    "INV-1010",
+    "INV-1012",
+    "BANK-FEE-77",
+    "INT-2026-10"
+  ]
+}
