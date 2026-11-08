@@ -1,0 +1,15 @@
+ledger_id,date,vendor,description,amount,reference,account
+L001,2026-10-01,Acme Supplies,Office supplies order,1250.00,INV-1001,6100-Office Supplies
+L002,2026-10-02,Northwind Office,Printer paper and ink,480.50,INV-1002,6100-Office Supplies
+L003,2026-10-03,BluePeak Cloud,Monthly cloud hosting,899.00,INV-1003,6200-Cloud Services
+L004,2026-10-04,Harbor Logistics,Freight delivery,2100.00,INV-1004,6300-Logistics
+L005,2026-10-05,Maple Catering,Team lunch catering,320.75,INV-1005,6400-Meals
+L006,2026-10-06,Quartz Legal,Contract review,1500.00,INV-1006,6500-Legal
+L007,2026-10-07,Pine Utilities,Electricity bill,210.40,INV-1007,6600-Utilities
+L008,2026-10-08,Cedar Travel,Flight booking,675.25,INV-1008,6700-Travel
+L009,2026-10-09,Willow Marketing,Social media campaign,980.00,INV-1009,6800-Marketing
+L010,2026-10-10,Aspen Insurance,Quarterly insurance premium,1340.00,INV-1010,6900-Insurance
+L011,2026-10-11,Birch Software,Design tool subscription,540.00,INV-1011,6200-Cloud Services
+L012,2026-10-12,Elm Consulting,Process review consulting,2750.00,INV-1012,7000-Consulting
+L013,2026-10-13,Firestone Rent,October office rent,4200.00,INV-1013,7100-Rent
+L014,2026-10-14,Grove Training,Staff training course,415.60,INV-1014,7200-Training

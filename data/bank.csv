@@ -1,0 +1,15 @@
+bank_id,date,payee,description,amount,reference
+B001,2026-10-01,Acme Supplies,Office supplies order,1250.00,INV-1001
+B002,2026-10-02,Northwind Office,Printer paper and ink,480.50,INV-1002
+B003,2026-10-03,BluePeak Cloud,Monthly cloud hosting,889.00,INV-1003
+B004,2026-10-04,Harbor Logistics,Freight delivery,2100.00,INV-1004
+B005,2026-10-06,Summit Bank,Monthly account fee,45.00,BANK-FEE-77
+B006,2026-10-08,Quartz Legal,Contract review,1500.00,INV-1006
+B007,2026-10-07,Pine Utilities,Electricity bill,210.40,INV-1007
+B008,2026-10-08,Cedar Travel,Flight booking,657.25,INV-1008
+B009,2026-10-09,Willow Marketing,Social media campaign,980.00,INV-1009
+B010,2026-10-11,Birch Software,Design tool subscription,540.00,INV-1011
+B011,2026-10-13,Elm Consulting,Process review consulting,2750.00,INV-1012
+B012,2026-10-13,Firestone Rent,October office rent,4200.00,INV-1013
+B013,2026-10-14,Grove Training,Staff training course,415.60,INV-1014
+B014,2026-10-15,River Bank,Interest received,120.00,INT-2026-10
