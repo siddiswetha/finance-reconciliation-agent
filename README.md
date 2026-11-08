@@ -15,7 +15,7 @@ dependencies, no paid API key, no real model call.
 
 **All data in this project is SYNTHETIC and invented.** The ledger and
 bank CSVs contain made-up vendors, amounts, and references (for example
-INV-1001, $1,250.00). There is no real finance data here and no SoFi
+INV-1001, $1,250.00). There is no real finance data here and no real company
 data. The files and the audit output say so explicitly.
 
 ## What it is, in plain words
@@ -107,9 +107,9 @@ Author: Venkata Swetha Siddi. Actual resume: 4+ years in ML and analytics, enter
 
 How this project complements, and does not repeat, her existing projects: her existing work under github.com/networkwithswetha-alt includes an LLM Fine-Tuning with Eval Harness project and a Document Extraction Pipeline (LLM extraction into Pydantic-validated records, with one validation retry and a deterministic regex fallback). This reconciliation agent is a different step: it does not fine-tune a model and it does not extract documents. It takes already-structured ledger and bank rows, reconciles them, retrieves close rules, explains each exception with source citations, and stops for a human check before saving an audit file. It builds on the same strengths — ML evaluation, prompt engineering, and schema-validated, auditable outputs — applied to a Finance close workflow instead.
 
-## SoFi skill mapping
+## Role skill mapping
 
-| SoFi Associate AI Engineer need | How this project shows it |
+| Finance AI Engineer need | How this project shows it |
 |---|---|
 | Automate Finance close / reconciliation | End-to-end ledger-to-bank matching workflow |
 | Outputs explainable, auditable, reconciled | Every item cites ledger + bank rows and the rule applied; full audit JSON |

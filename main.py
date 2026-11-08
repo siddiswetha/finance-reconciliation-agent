@@ -289,7 +289,7 @@ def run_reconciliation(ledger_path, bank_path, docs_dir, llm=None):
 def build_audit(items, summary, human_decision):
     return {
         "project": "finance-reconciliation-agent",
-        "data_note": "SYNTHETIC data only — all ledger and bank rows are invented examples. No real finance data, no SoFi data.",
+        "data_note": "SYNTHETIC data only — all ledger and bank rows are invented examples. No real finance data, no real company data.",
         "llm_note": "Explanations were drafted by the local deterministic MockLLMClient. No real LLM API was called.",
         "summary": summary,
         "assumptions": ASSUMPTIONS,
